@@ -1,0 +1,92 @@
+import random
+import string
+import time
+import re # Módulo para expressões regulares, usado para verificar padrões
+
+def avaliar_forca_senha(senha):
+    """Avalia a força da senha e retorna uma classificação."""
+    forca = 0
+    comprimento = len(senha)
+
+    # 1. Pontuação baseada no comprimento
+    if comprimento >= 12:
+        forca += 3 # Senha longa
+    elif comprimento >= 8:
+        forca += 1 # Senha de comprimento aceitável
+
+    # 2. Pontuação baseada na variedade de caracteres (usando regex para verificar a presença)
+    # Verifica a presença de minúsculas
+    if re.search(r'[a-z]', senha):
+        forca += 1
+    # Verifica a presença de maiúsculas
+    if re.search(r'[A-Z]', senha):
+        forca += 1
+    # Verifica a presença de números
+    if re.search(r'[0-9]', senha):
+        forca += 1
+    # Verifica a presença de símbolos
+    if re.search(r'[!@#$%^&*()_+={}\[\]|;:"<>,./?]', senha):
+        forca += 1
+
+    # 3. Classificação final
+    if forca >= 7:
+        return "⭐ Muito Forte"
+    elif forca >= 5:
+        return "💪 Forte"
+    elif forca >= 3:
+        return "⚠️ Moderada"
+    else:
+        return "❌ Fraca"
+
+def gerar_senha():
+    """Gera uma senha forte baseada nas preferências do usuário."""
+
+    caracteres = string.ascii_lowercase
+    print("✨ Gerador de Senhas Seguras com Avaliação de Força ✨")
+
+    # [Código para Coletar Configurações e Gerar a Senha - O mesmo do código anterior]
+    # Início do bloco de input
+    while True:
+        try:
+            comprimento = int(input("\nDigite o comprimento desejado da senha (ex: 12): "))
+            if comprimento <= 0:
+                print("O comprimento deve ser um número positivo. Tente novamente.")
+                continue
+            break
+        except ValueError:
+            print("Entrada inválida. Por favor, digite um número inteiro.")
+
+    incluir_maiusculas = input("Incluir letras maiúsculas? (s/n): ").lower().startswith('s')
+    incluir_numeros = input("Incluir números? (s/n): ").lower().startswith('s')
+    incluir_simbolos = input("Incluir símbolos (ex: !@#$%&*)? (s/n): ").lower().startswith('s')
+
+    if incluir_maiusculas:
+        caracteres += string.ascii_uppercase
+    if incluir_numeros:
+        caracteres += string.digits
+    if incluir_simbolos:
+        caracteres += string.punctuation 
+    
+    if not caracteres:
+        print("\nErro: Nenhum tipo de caractere foi selecionado. Tente novamente.")
+        return
+
+    senha = ''.join(random.choice(caracteres) for _ in range(comprimento))
+    # Fim do bloco de input e geração
+    
+    # --- NOVO: Chamada da função de avaliação ---
+    forca = avaliar_forca_senha(senha)
+
+    # --- Exibição do Resultado ---
+    print("\n" + "="*50)
+    print(f"🎉 Sua senha gerada ({comprimento} caracteres):")
+    print(f"➡️ **{senha}**")
+    print("-" * 50)
+    print(f"📊 Força da Senha: **{forca}**")
+    print("="*50)
+    time.sleep(1)
+    print("\nDica: Senhas muito fortes costumam ter 12 ou mais caracteres e variedade de tipos.")
+
+# Execução do script
+if __name__ == "__main__":
+    gerar_senha()
